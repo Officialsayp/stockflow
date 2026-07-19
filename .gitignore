@@ -1,0 +1,47 @@
+# Go
+bin/
+*.test
+*.out
+coverage/
+coverage.txt
+cover.out
+
+# Build and temporary files
+build/
+dist/
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs and editors
+.idea/
+.vscode/
+*.iml
+
+# Docker
+docker-compose.override.yml
+
+# Environment and local secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# Local service data
+.data/
+data/
+postgres-data/
+redis-data/
+kafka-data/
+pgdata/

@@ -1,0 +1,29 @@
+name: Feature request
+description: Предложить идею для будущей итерации
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Предложения оцениваются в контексте учебной цели и текущего roadmap. Наличие каталога или названия сервиса не является обязательством реализовать функцию.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Проблема или учебная цель
+      description: Какую проблему или тему помогает разобрать предложение?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Предлагаемое изменение
+      description: Опишите ограниченный и проверяемый результат.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Альтернативы
+      description: Какие варианты уже рассматривались?

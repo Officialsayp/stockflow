@@ -1,0 +1,3 @@
+# Infrastructure services will be introduced incrementally in later stages.
+# This bootstrap file intentionally starts no application, database, broker, cache, or observability component.
+services: {}

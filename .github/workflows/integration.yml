@@ -1,0 +1,51 @@
+name: Integration
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect integration prerequisites
+        id: readiness
+        shell: bash
+        run: |
+          has_modules=false
+          if find . -path './.git' -prune -o -name go.mod -type f -print -quit | grep -q .; then
+            has_modules=true
+          fi
+          has_services=false
+          if docker compose config --services | grep -q .; then
+            has_services=true
+          fi
+          if [ "$has_modules" = true ] && [ "$has_services" = true ]; then
+            echo "active=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "active=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Set up Go
+        if: steps.readiness.outputs.active == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Validate compose and run integration tests
+        if: steps.readiness.outputs.active == 'true'
+        shell: bash
+        run: |
+          docker compose config --quiet
+          while IFS= read -r module; do
+            module_dir="$(dirname "$module")"
+            echo "Running integration tests for $module_dir"
+            (cd "$module_dir" && go test -tags=integration ./...)
+          done < <(find . -path './.git' -prune -o -name go.mod -type f -print)
+      - name: Explain inactive stage
+        if: steps.readiness.outputs.active != 'true'
+        run: |
+          echo "Integration stage is inactive: Go modules and runnable Compose services are not both present yet."

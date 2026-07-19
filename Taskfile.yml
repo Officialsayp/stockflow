@@ -1,0 +1,63 @@
+version: '3'
+
+tasks:
+  help:
+    desc: Show available bootstrap commands
+    cmds:
+      - task --list
+
+  fmt:
+    desc: Format Go code (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: fmt is not implemented yet; no Go modules have been added."
+        exit 1
+
+  lint:
+    desc: Run static checks (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: lint is not implemented yet; no Go modules have been added."
+        exit 1
+
+  test:
+    desc: Run tests (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: test is not implemented yet; no testable Go modules have been added."
+        exit 1
+
+  test-race:
+    desc: Run race tests (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: test-race is not implemented yet; no testable Go modules have been added."
+        exit 1
+
+  test-integration:
+    desc: Run integration tests (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: test-integration is not implemented yet; infrastructure is not configured."
+        exit 1
+
+  generate:
+    desc: Generate code (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: generate is not implemented yet; contracts and generators are not configured."
+        exit 1
+
+  up:
+    desc: Start local infrastructure (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: up is not implemented yet; local infrastructure is intentionally absent."
+        exit 1
+
+  down:
+    desc: Stop local infrastructure (not implemented yet)
+    cmds:
+      - |
+        echo "StockFlow bootstrap: down is not implemented yet; no local infrastructure is running."
+        exit 1

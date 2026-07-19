@@ -1,0 +1,15 @@
+.git
+.github
+.idea
+.vscode
+.env
+.env.local
+bin
+build
+dist
+tmp
+coverage
+*.test
+*.out
+*.pem
+*.key

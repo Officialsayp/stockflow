@@ -1,0 +1,39 @@
+name: Bug report
+description: Сообщить о воспроизводимой проблеме
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Спасибо за сообщение. StockFlow находится на bootstrap-этапе: сначала убедитесь, что проблема относится к уже добавленному содержимому.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Краткое описание
+      description: Что произошло и какой результат ожидался?
+      placeholder: Опишите наблюдаемое и ожидаемое поведение.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Шаги воспроизведения
+      description: Перечислите минимальные шаги.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Окружение
+      description: ОС, версии инструментов и другие безопасные для публикации детали.
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Дополнительный контекст
+      description: Не включайте секреты, токены или персональные данные.

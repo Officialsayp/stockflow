@@ -1,0 +1,49 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect Go modules
+        id: readiness
+        shell: bash
+        run: |
+          if find . -path './.git' -prune -o -name go.mod -type f -print -quit | grep -q .; then
+            echo "active=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "active=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Set up Go
+        if: steps.readiness.outputs.active == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Run formatting and vet checks
+        if: steps.readiness.outputs.active == 'true'
+        shell: bash
+        run: |
+          while IFS= read -r module; do
+            module_dir="$(dirname "$module")"
+            echo "Linting $module_dir"
+            (
+              cd "$module_dir"
+              if find . -type f -name '*.go' -print -quit | grep -q .; then
+                unformatted="$(find . -type f -name '*.go' -exec gofmt -l {} +)"
+                test -z "$unformatted" || { printf '%s\n' "$unformatted"; exit 1; }
+              fi
+              go vet ./...
+            )
+          done < <(find . -path './.git' -prune -o -name go.mod -type f -print)
+      - name: Explain inactive stage
+        if: steps.readiness.outputs.active != 'true'
+        run: |
+          echo "Lint stage is inactive: no Go modules are present in the bootstrap repository."
