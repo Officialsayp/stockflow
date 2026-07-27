@@ -7,6 +7,7 @@ const (
 	OrderStatusProcessing OrderStatus = "processing"
 	OrderStatusShipped    OrderStatus = "shipped"
 	OrderStatusDelivered  OrderStatus = "delivered"
+	OrderStatusCompleted  OrderStatus = "completed"
 	OrderStatusCancelled  OrderStatus = "cancelled"
 )
 

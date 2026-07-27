@@ -6,16 +6,16 @@ import (
 )
 
 type Order struct {
-	ID              ID
-	CreatedAt       time.Time
-	Items           []OrderItem
-	Status          OrderStatus
-	PaymentStatus   OrderPaymentStatus
-	BuyerID         BuyerID
-	PaymentMethod   PaymentMethod
-	DeliveryAddress DeliveryAddress
-	DeliveryCost    Money
-	BuyerComment    BuyerComment
+	id              ID
+	createdAt       time.Time
+	items           []OrderItem
+	status          OrderStatus
+	paymentStatus   OrderPaymentStatus
+	buyerID         BuyerID
+	paymentMethod   PaymentMethod
+	deliveryAddress DeliveryAddress
+	deliveryCost    Money
+	buyerComment    BuyerComment
 }
 
 func NewOrder(id ID, items []OrderItem, buyerID BuyerID, paymentMethod PaymentMethod, deliveryAddress DeliveryAddress, buyerComment BuyerComment) (Order, error) {
@@ -32,5 +32,43 @@ func NewOrder(id ID, items []OrderItem, buyerID BuyerID, paymentMethod PaymentMe
 		return Order{}, errors.New("delivery address is empty")
 	}
 
-	return Order{}, nil
+	copyItems := make([]OrderItem, len(items))
+	copy(copyItems, items)
+	deliveryCost, err := NewMoney(0, CurrencyRUB)
+	if err != nil {
+		return Order{}, err
+	}
+	return Order{
+		id:              id,
+		createdAt:       time.Now(),
+		items:           copyItems,
+		status:          OrderStatusCreated,
+		paymentStatus:   OrderPaymentStatusAwaitingPayment,
+		buyerID:         buyerID,
+		paymentMethod:   paymentMethod,
+		deliveryAddress: deliveryAddress,
+		deliveryCost:    deliveryCost,
+		buyerComment:    buyerComment,
+	}, nil
+}
+func (o *Order) Pay() error {
+	switch {
+	case o.status == OrderStatusCancelled:
+		return errors.New("cancelled order cannot be paid")
+	case o.status == OrderStatusCompleted:
+		return errors.New("completed order cannot be completed")
+	case o.paymentStatus != OrderPaymentStatusAwaitingPayment:
+		return errors.New("order is not awaiting payment")
+	}
+
+	o.paymentStatus = OrderPaymentStatusPaid
+
+	return nil
+}
+func (o *Order) Cancel() error {
+	//TODO
+}
+
+func (o *Order) Shipped() error {
+	//TODO
 }
