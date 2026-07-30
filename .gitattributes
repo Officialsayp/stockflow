@@ -1,5 +1,0 @@
-* text=auto eol=lf
-
-*.go diff=go
-*.md diff=markdown
-Makefile text eol=lf
