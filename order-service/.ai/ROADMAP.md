@@ -2,7 +2,7 @@
 
 Этапы обучения.
 
-[ ] net/http
+[x] net/http
 
 [ ] GET handlers
 
