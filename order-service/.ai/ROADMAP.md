@@ -4,9 +4,9 @@
 
 [x] net/http
 
-[ ] GET handlers
+[x] GET handlers
 
-[ ] POST handlers
+[x] POST handlers
 
 [ ] JSON
 

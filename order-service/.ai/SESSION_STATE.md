@@ -2,7 +2,7 @@
 
 ## Текущий этап
 
-GET handlers
+JSON
 
 ## Изучено
 
@@ -14,22 +14,29 @@ GET handlers
 - преобразование строковых параметров через `strconv.Atoi` и `strconv.ParseBool`;
 - `200 OK`, `204 No Content`, `400 Bad Request`, `405 Method Not Allowed`;
 - отправка response и заголовка `Content-Type`.
+- `GET /health` и статус `204 No Content` без body;
+- разница между `mux.HandleFunc` и `mux.Handle` с `http.HandlerFunc`.
+- `POST /orders` и статус `201 Created`;
+- ручная проверка endpoints и assertions в Bruno.
+- отправка текстового request body из Bruno;
+- чтение текстового body через `r.Body` и `io.ReadAll`.
+- JSON request body, `json.Decoder` и request DTO.
 
 ## В процессе
 
-Закрепление GET endpoints и различия между path и query parameters.
+JSON response: response DTO, `Content-Type` и `json.Encoder`.
 
 ## Текущая задача
 
-Добавить `GET /health`:
+Вернуть JSON response из `POST /orders`:
 
-- создать `healthHandler`;
-- вернуть `204 No Content` без body;
-- зарегистрировать маршрут на `ServeMux`;
-- проверить `GET` и `POST` через `curl`.
+- создать простой response DTO;
+- установить `Content-Type: application/json`;
+- отправить JSON response со статусом `201 Created`;
+- проверить JSON response в Bruno.
 
 ## Следующая тема
 
-`http.Handler` и `http.HandlerFunc`: зачем они нужны и как `ServeMux` вызывает handler.
+transport validation JSON request.
 
-Во время следующего занятия продолжить именно с `GET /health`.
+Во время следующего занятия продолжить именно с JSON response для `POST /orders`.

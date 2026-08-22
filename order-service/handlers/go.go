@@ -1,11 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 )
+
+type createOrderRequest struct {
+	Product string `json:"product"`
+}
 
 func getOrderHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
@@ -40,9 +45,28 @@ func getOrderHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func healthHandler(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func createOrderHandler(w http.ResponseWriter, r *http.Request) {
+	var req createOrderRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "incorrect Body", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintf(w, "received product: %s", req.Product)
+	return
+}
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /orders/{id}", getOrderHandler)
+	mux.Handle("GET /health", http.HandlerFunc(healthHandler))
+	mux.HandleFunc("POST /orders", createOrderHandler)
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		log.Fatal(err)
