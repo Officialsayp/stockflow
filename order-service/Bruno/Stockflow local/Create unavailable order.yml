@@ -1,0 +1,27 @@
+info:
+  name: Create unavailable order
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |-
+      {
+        "product": "unavailable"
+      }
+  auth: inherit
+
+runtime:
+  assertions:
+    - expression: ""
+      operator: eq
+      value: "400"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
