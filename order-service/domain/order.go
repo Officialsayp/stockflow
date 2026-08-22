@@ -80,7 +80,8 @@ func (o *Order) RequestCancellation() error {
 		return errors.New("the order should not be in the cancellation status")
 	case o.status == OrderStatusCancelled:
 		return errors.New("the order should not be in the cancelled status")
-	case o.status == OrderStatusCompleted: return errors.New("the order should not be in the completed status")
+	case o.status == OrderStatusCompleted:
+		return errors.New("the order should not be in the completed status")
 	case o.status == OrderStatusShipped:
 		return errors.New("the order should not be in the shipped status")
 	}
@@ -191,11 +192,11 @@ func (o *Order) Complete() error {
 	return nil
 }
 
-func (o *Order) Failed()error {
+func (o *Order) Failed() error {
 	if o.paymentStatus == OrderPaymentStatusProcessing || o.paymentStatus == OrderPaymentStatusRefundProcessing {
-	o.paymentStatus = OrderPaymentStatusFailed
-} else {
-return errors.New("the payment status must be processing or refund processing")
-}
+		o.paymentStatus = OrderPaymentStatusFailed
+	} else {
+		return errors.New("the payment status must be processing or refund processing")
+	}
 	return nil
 }
