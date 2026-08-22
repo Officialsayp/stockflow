@@ -11,4 +11,3 @@ const (
 	OrderStatusCancellation OrderStatus = "cancellation"
 	OrderStatusCancelled    OrderStatus = "cancelled"
 )
-
