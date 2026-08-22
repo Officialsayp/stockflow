@@ -12,7 +12,7 @@
 
 [x] DTO
 
-[ ] Validation
+[x] Validation
 
 [ ] Service Layer
 

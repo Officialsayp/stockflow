@@ -2,7 +2,7 @@
 
 ## Текущий этап
 
-Validation
+Service Layer
 
 ## Изучено
 
@@ -22,21 +22,26 @@ Validation
 - чтение текстового body через `r.Body` и `io.ReadAll`.
 - JSON request body, `json.Decoder` и request DTO.
 - JSON response через response DTO и `json.Encoder`.
+- transport validation поля `product`: пустая строка и строка только из пробелов возвращают `400 Bad Request`;
+- Bruno assertions для `400` при пустом `product`, пробелах и некорректном JSON;
+- различие transport validation и business validation;
+- начальная связка `main -> handler -> OrderService` через передачу зависимости в `createOrderHandler`.
 
 ## В процессе
 
-transport validation: корректный JSON и обязательное поле `product`.
+Service Layer: первая бизнес-проверка товара `"unavailable"`.
 
 ## Текущая задача
 
-Проверить обязательное поле `product` в `POST /orders`:
+Перед продолжением обучения завершить техническую правку после merge PR №10:
 
-- принять JSON с пустым `product`;
-- вернуть `400 Bad Request` до успешного response;
-- создать Bruno request и assertion для этого сценария.
+- создать отдельный PR из коммита `6fdab38` (`minimal changes`), в котором только форматирование `service/order_service.go`;
+- дождаться зелёной проверки lint в новом PR; старый failed run для коммита `70526b3` не перезапускать;
+- затем заменить передачу `err.Error()` клиенту на безопасный текст `product cannot be ordered`;
+- исправить Bruno assertion в `Create unavailable order`: `expression` должен быть `res.status`, значение — `400`.
 
 ## Следующая тема
 
-различие transport validation и business validation.
+Продолжить Service Layer: почему handler не должен знать бизнес-правила и как service возвращает ошибки.
 
-Во время следующего занятия продолжить именно с transport validation `product`.
+Во время следующего занятия начать с нового PR для форматирования, затем закончить первый сценарий business validation.
