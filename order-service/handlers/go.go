@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type createOrderRequest struct {
@@ -60,7 +61,8 @@ func createOrderHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "incorrect Body", http.StatusBadRequest)
 		return
 	}
-	if req.Product == "" {
+	prodTrimSpace := strings.TrimSpace(req.Product)
+	if prodTrimSpace == "" {
 		http.Error(w, "product is required", http.StatusBadRequest)
 		return
 	}

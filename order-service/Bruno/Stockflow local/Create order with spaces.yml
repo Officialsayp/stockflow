@@ -1,0 +1,26 @@
+info:
+  name: Create order with spaces
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: json
+    data: |-
+      {
+        "product": "   "
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: expect(res.status).to.equal(400);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
