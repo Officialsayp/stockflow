@@ -106,3 +106,32 @@ JSON response: response DTO, `Content-Type: application/json` и `json.Encoder`.
 ### Следующее занятие
 
 Transport validation: JSON может быть синтаксически корректным, но обязательное поле `product` может быть пустым.
+
+## 2026-08-22 — transport validation и начало Service Layer
+
+### Завершено
+
+- `POST /orders` возвращает `400 Bad Request`, если `product` пустой или состоит только из пробелов;
+- `strings.TrimSpace` убирает пробелы в начале и конце строки для проверки обязательного поля;
+- Bruno requests и assertions на `400` созданы для пустого `product`, `product` из пробелов и некорректного JSON;
+- transport validation отделена от business validation;
+- создан пакет `service` и `OrderService`;
+- `OrderService` передаётся в `createOrderHandler` из `main` как зависимость;
+- добавлено временное бизнес-правило: товар `unavailable` нельзя заказать.
+
+### Важные выводы
+
+- Handler отвечает за HTTP: чтение JSON, HTTP-коды и response.
+- Service отвечает за правила приложения: например, можно ли заказать товар.
+- Некорректный JSON и пустой `product` — ошибки формы входящего HTTP-запроса; отсутствие товара на складе — бизнес-правило.
+- Повторный запуск failed GitHub Actions проверяет тот же старый коммит. Для исправления после merge нужен новый PR с новым коммитом.
+
+### Точка остановки
+
+- PR №10 с началом Service Layer уже смёржен, но его lint упал из-за форматирования `service/order_service.go`.
+- Форматирование исправлено в отдельном коммите `6fdab38` (`minimal changes`), который ещё нужно отправить отдельным PR.
+- После зелёного lint нужно вернуть безопасный внешний текст ошибки `product cannot be ordered` вместо `err.Error()` и исправить Bruno assertion `Create unavailable order`.
+
+### Следующее занятие
+
+Создать PR с форматированием, проверить зелёный lint и завершить первый сценарий business validation в Service Layer.
