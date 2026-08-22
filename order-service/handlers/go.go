@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/MaximZolotoy/stockflow/services/order-service/service"
 	"log"
 	"net/http"
 	"strconv"
@@ -54,31 +55,39 @@ func healthHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func createOrderHandler(w http.ResponseWriter, r *http.Request) {
-	var req createOrderRequest
-	errReq := json.NewDecoder(r.Body).Decode(&req)
-	if errReq != nil {
-		http.Error(w, "incorrect Body", http.StatusBadRequest)
+func createOrderHandler(orderService *service.OrderService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req createOrderRequest
+		errReq := json.NewDecoder(r.Body).Decode(&req)
+		if errReq != nil {
+			http.Error(w, "incorrect Body", http.StatusBadRequest)
+			return
+		}
+		prodTrimSpace := strings.TrimSpace(req.Product)
+		if prodTrimSpace == "" {
+			http.Error(w, "product is required", http.StatusBadRequest)
+			return
+		}
+		err := orderService.CreateOrder(req.Product)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(createOrderResponse{
+			Product: req.Product,
+		})
 		return
 	}
-	prodTrimSpace := strings.TrimSpace(req.Product)
-	if prodTrimSpace == "" {
-		http.Error(w, "product is required", http.StatusBadRequest)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(createOrderResponse{
-		Product: req.Product,
-	})
-	return
 }
 
 func main() {
+	orderService := &service.OrderService{}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /orders/{id}", getOrderHandler)
 	mux.Handle("GET /health", http.HandlerFunc(healthHandler))
-	mux.HandleFunc("POST /orders", createOrderHandler)
+	mux.HandleFunc("POST /orders", createOrderHandler(orderService))
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		log.Fatal(err)

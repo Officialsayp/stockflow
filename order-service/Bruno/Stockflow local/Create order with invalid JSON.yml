@@ -1,0 +1,23 @@
+info:
+  name: Create order with invalid JSON
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/orders"
+  body:
+    type: text
+    data: not-json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: expect(res.status).to.equal(400);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
