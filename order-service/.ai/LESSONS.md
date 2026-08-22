@@ -89,3 +89,20 @@ JSON сначала должен быть декодирован в Go-struct. �
 ### Следующее занятие
 
 JSON response: response DTO, `Content-Type: application/json` и `json.Encoder`.
+
+## 2026-08-22 — JSON response
+
+### Завершено
+
+- response DTO `createOrderResponse`;
+- заголовок `Content-Type: application/json`;
+- сериализация response через `json.NewEncoder`;
+- `201 Created` и JSON response в Bruno.
+
+### Важный вывод
+
+Для JSON response header `Content-Type` нужно установить до `WriteHeader`. Затем `json.Encoder` записывает body в `http.ResponseWriter`.
+
+### Следующее занятие
+
+Transport validation: JSON может быть синтаксически корректным, но обязательное поле `product` может быть пустым.

@@ -2,7 +2,7 @@
 
 ## Текущий этап
 
-JSON
+Validation
 
 ## Изучено
 
@@ -21,22 +21,22 @@ JSON
 - отправка текстового request body из Bruno;
 - чтение текстового body через `r.Body` и `io.ReadAll`.
 - JSON request body, `json.Decoder` и request DTO.
+- JSON response через response DTO и `json.Encoder`.
 
 ## В процессе
 
-JSON response: response DTO, `Content-Type` и `json.Encoder`.
+transport validation: корректный JSON и обязательное поле `product`.
 
 ## Текущая задача
 
-Вернуть JSON response из `POST /orders`:
+Проверить обязательное поле `product` в `POST /orders`:
 
-- создать простой response DTO;
-- установить `Content-Type: application/json`;
-- отправить JSON response со статусом `201 Created`;
-- проверить JSON response в Bruno.
+- принять JSON с пустым `product`;
+- вернуть `400 Bad Request` до успешного response;
+- создать Bruno request и assertion для этого сценария.
 
 ## Следующая тема
 
-transport validation JSON request.
+различие transport validation и business validation.
 
-Во время следующего занятия продолжить именно с JSON response для `POST /orders`.
+Во время следующего занятия продолжить именно с transport validation `product`.

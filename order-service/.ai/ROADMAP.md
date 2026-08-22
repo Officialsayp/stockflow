@@ -8,9 +8,9 @@
 
 [x] POST handlers
 
-[ ] JSON
+[x] JSON
 
-[ ] DTO
+[x] DTO
 
 [ ] Validation
 

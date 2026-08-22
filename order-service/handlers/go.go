@@ -12,6 +12,10 @@ type createOrderRequest struct {
 	Product string `json:"product"`
 }
 
+type createOrderResponse struct {
+	Product string `json:"product"`
+}
+
 func getOrderHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	idInt, err1 := strconv.Atoi(idStr)
@@ -51,14 +55,20 @@ func healthHandler(w http.ResponseWriter, _ *http.Request) {
 
 func createOrderHandler(w http.ResponseWriter, r *http.Request) {
 	var req createOrderRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	errReq := json.NewDecoder(r.Body).Decode(&req)
+	if errReq != nil {
 		http.Error(w, "incorrect Body", http.StatusBadRequest)
 		return
 	}
-
+	if req.Product == "" {
+		http.Error(w, "product is required", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintf(w, "received product: %s", req.Product)
+	json.NewEncoder(w).Encode(createOrderResponse{
+		Product: req.Product,
+	})
 	return
 }
 
