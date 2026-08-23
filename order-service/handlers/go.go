@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/MaximZolotoy/stockflow/services/order-service/service"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/MaximZolotoy/stockflow/services/order-service/service"
 )
 
 type createOrderRequest struct {
