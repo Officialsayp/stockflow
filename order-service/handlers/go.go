@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -70,7 +71,7 @@ func createOrderHandler(orderService *service.OrderService) http.HandlerFunc {
 			return
 		}
 		err := orderService.CreateOrder(req.Product)
-		if err != nil {
+		if err != nil && errors.Is(err, service.ErrProductUnavailable) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}

@@ -2,7 +2,13 @@ name: Integration
 
 on:
   push:
+    branches:
+      - main
+
   pull_request:
+    branches:
+      - main
+
   workflow_dispatch:
 
 permissions:
@@ -10,9 +16,13 @@ permissions:
 
 jobs:
   integration:
+    name: integration
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Detect integration prerequisites
         id: readiness
         shell: bash
@@ -21,30 +31,43 @@ jobs:
           if find . -path './.git' -prune -o -name go.mod -type f -print -quit | grep -q .; then
             has_modules=true
           fi
+
           has_services=false
           if docker compose config --services | grep -q .; then
             has_services=true
           fi
+
           if [ "$has_modules" = true ] && [ "$has_services" = true ]; then
             echo "active=true" >> "$GITHUB_OUTPUT"
           else
             echo "active=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Set up Go
+
+      - name: Setup Go
         if: steps.readiness.outputs.active == 'true'
-        uses: actions/setup-go@v7
+        uses: actions/setup-go@v5
         with:
-          go-version: stable
+          go-version-file: order-service/go.mod
+          cache: false
+
       - name: Validate compose and run integration tests
         if: steps.readiness.outputs.active == 'true'
         shell: bash
         run: |
           docker compose config --quiet
+
           while IFS= read -r module; do
             module_dir="$(dirname "$module")"
             echo "Running integration tests for $module_dir"
-            (cd "$module_dir" && go test -tags=integration ./...)
-          done < <(find . -path './.git' -prune -o -name go.mod -type f -print)
+
+            (
+              cd "$module_dir"
+              go test -tags=integration ./...
+            )
+          done < <(
+            find . -path './.git' -prune -o -name go.mod -type f -print
+          )
+
       - name: Explain inactive stage
         if: steps.readiness.outputs.active != 'true'
         run: |

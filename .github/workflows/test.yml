@@ -2,41 +2,34 @@ name: Test
 
 on:
   push:
+    branches:
+      - main
   pull_request:
-  workflow_dispatch:
+    branches:
+      - main
 
 permissions:
   contents: read
 
 jobs:
   test:
+    name: test
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v7
-      - name: Detect Go modules
-        id: readiness
-        shell: bash
-        run: |
-          if find . -path './.git' -prune -o -name go.mod -type f -print -quit | grep -q .; then
-            echo "active=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "active=false" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Set up Go
-        if: steps.readiness.outputs.active == 'true'
-        uses: actions/setup-go@v7
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          go-version: stable
-      - name: Run unit tests
-        if: steps.readiness.outputs.active == 'true'
-        shell: bash
-        run: |
-          while IFS= read -r module; do
-            module_dir="$(dirname "$module")"
-            echo "Testing $module_dir"
-            (cd "$module_dir" && go test ./...)
-          done < <(find . -path './.git' -prune -o -name go.mod -type f -print)
-      - name: Explain inactive stage
-        if: steps.readiness.outputs.active != 'true'
-        run: |
-          echo "Test stage is inactive: no Go modules are present in the bootstrap repository."
+          go-version-file: order-service/go.mod
+          cache: false
+
+      - name: Download dependencies
+        working-directory: order-service
+        run: go mod download
+
+      - name: Test
+        working-directory: order-service
+        run: go test ./...
