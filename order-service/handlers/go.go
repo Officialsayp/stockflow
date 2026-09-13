@@ -100,7 +100,7 @@ func createOrderHandler(orderService *service.OrderService) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(createOrderResponse{
-			Product: req.Product,
+			Product: product,
 		})
 		return
 	}
