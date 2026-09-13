@@ -65,20 +65,42 @@ func createOrderHandler(orderService *service.OrderService) http.HandlerFunc {
 			http.Error(w, "incorrect Body", http.StatusBadRequest)
 			return
 		}
-		prodTrimSpace := strings.TrimSpace(req.Product)
-		if prodTrimSpace == "" {
-			http.Error(w, "product is required", http.StatusBadRequest)
+		product := strings.TrimSpace(req.Product)
+
+		if product == "" {
+			http.Error(
+				w,
+				"product is required",
+				http.StatusBadRequest,
+			)
 			return
 		}
-		err := orderService.CreateOrder(req.Product)
-		if err != nil && errors.Is(err, service.ErrProductUnavailable) {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+
+		err := orderService.CreateOrder(product)
+		if err != nil {
+			if errors.Is(
+				err,
+				service.ErrProductUnavailable,
+			) {
+				http.Error(
+					w,
+					"product cannot be ordered",
+					http.StatusBadRequest,
+				)
+				return
+			}
+
+			http.Error(
+				w,
+				"internal server error",
+				http.StatusInternalServerError,
+			)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(createOrderResponse{
-			Product: req.Product,
+			Product: product,
 		})
 		return
 	}
