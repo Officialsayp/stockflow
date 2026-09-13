@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -33,7 +34,7 @@ func getOrderHandler(w http.ResponseWriter, r *http.Request) {
 
 	detailsStr := r.URL.Query().Get("details")
 	details, err2 := strconv.ParseBool(detailsStr)
-	if err2 != nil && detailsStr != "" {
+	if err2 != nil && detailsStr == "" {
 		http.Error(w, "Некорректный параметр details", http.StatusBadRequest)
 		return
 	}
@@ -70,7 +71,7 @@ func createOrderHandler(orderService *service.OrderService) http.HandlerFunc {
 			return
 		}
 		err := orderService.CreateOrder(req.Product)
-		if err != nil {
+		if err != nil && errors.Is(err, ErrProductUnavailable) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
