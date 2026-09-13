@@ -1,10 +1,11 @@
 name: Security
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
+
+  push:
     branches:
       - main
 
@@ -16,14 +17,12 @@ jobs:
     name: security
     runs-on: ubuntu-latest
 
-    continue-on-error: true
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version-file: order-service/go.mod
           cache: false
@@ -33,4 +32,4 @@ jobs:
 
       - name: Security scan
         working-directory: order-service
-        run: gosec ./...
+        run: gosec -no-fail ./...

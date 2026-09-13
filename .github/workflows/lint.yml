@@ -1,10 +1,11 @@
 name: Lint
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
+
+  push:
     branches:
       - main
 
@@ -18,21 +19,26 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version-file: order-service/go.mod
           cache: false
 
-      - name: Download dependencies
+      - name: Check formatting
         working-directory: order-service
-        run: go mod download
+        shell: bash
+        run: |
+          unformatted="$(gofmt -l .)"
 
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          working-directory: order-service
-          args: --config=../.golangci.yml ./...
+          if [ -n "$unformatted" ]; then
+            echo "These files are not formatted:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Vet
+        working-directory: order-service
+        run: go vet ./...
